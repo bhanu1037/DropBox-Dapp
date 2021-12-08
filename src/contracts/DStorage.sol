@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.5.0 <0.9.0;
 
 contract DStorage {
@@ -37,7 +38,7 @@ contract DStorage {
   }
 
   // Upload File function
-  function uploadFile(string memory _fileHash,uint _fileSize,string memory _fileType,string memory _fileName,string memory _fileDescription,uint) public {
+  function uploadFile(string memory _fileHash,uint _fileSize,string memory _fileType,string memory _fileName,string memory _fileDescription) public {
     // Make sure the file hash exists
       require(bytes(_fileHash).length > 0);
     // Make sure file type exists
