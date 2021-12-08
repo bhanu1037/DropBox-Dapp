@@ -18,6 +18,7 @@ contract DStorage {
    string fileName;
    string fileDescription;
    uint uploadTime;
+   int upvotes;
    address payable uploader; 
   }
 
@@ -31,10 +32,18 @@ contract DStorage {
     string fileName,
     string fileDescription,
     uint uploadTime,
+    int upvotes,
     address payable uploader
   );
 
   constructor() public {
+  }
+  
+  function fileUpvoted(uint _fileId) public {
+    files[_fileId].upvotes++;
+  }
+  function downUpvoted(uint _fileId) public {
+    files[_fileId].upvotes--;
   }
 
   // Upload File function
@@ -56,10 +65,10 @@ contract DStorage {
     // Increment file id
     fileCount++;
     // Add File to the contract
-    files[fileCount] = File(fileCount, _fileHash, _fileSize, _fileType, _fileName, _fileDescription,block.timestamp, msg.sender);
+    files[fileCount] = File(fileCount, _fileHash, _fileSize, _fileType, _fileName, _fileDescription,block.timestamp, 0,msg.sender);
 
     // Trigger an event
-    emit FileUploaded(fileCount,_fileHash,_fileSize,_fileType,_fileName,_fileDescription,block.timestamp,msg.sender);
+    emit FileUploaded(fileCount,_fileHash,_fileSize,_fileType,_fileName,_fileDescription,block.timestamp,0,msg.sender);
   }
 
 }
