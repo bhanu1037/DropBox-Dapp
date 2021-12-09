@@ -39,18 +39,18 @@ class App extends Component {
     //Load account
     const accounts = await web3.eth.getAccounts();
     //console.log(accounts);
-    this.setState({account : accounts[0]}); 
+    this.setState({ account: accounts[0] });
 
     //Network ID
     const networkId = await web3.eth.net.getId()
     const networkData = DStorage.networks[networkId]
-    if(networkData) {
+    if (networkData) {
       // Assign contract
       const dstorage = new web3.eth.Contract(DStorage.abi, networkData.address)
       this.setState({ dstorage })
       // Get files amount
       const filesCount = await dstorage.methods.fileCount().call()
-    
+
       this.setState({ filesCount })
       // Load files&sort by the newest
       for (var i = filesCount; i >= 1; i--) {
@@ -62,7 +62,7 @@ class App extends Component {
     } else {
       window.alert('DStorage contract not deployed to detected network.')
     }
-    this.setState({loading: false});
+    this.setState({ loading: false });
 
   }
 
@@ -94,26 +94,26 @@ class App extends Component {
     // Add file to the IPFS
     ipfs.add(this.state.buffer, (error, result) => {
       console.log('IPFS result', result)
-      if(error) {
+      if (error) {
         console.error(error)
         return
       }
 
       this.setState({ loading: true })
       //Assign value for the file without extension
-      if(this.state.type === ''){
-        this.setState({type: 'none'})
+      if (this.state.type === '') {
+        this.setState({ type: 'none' })
       }
       this.state.dstorage.methods.uploadFile(result[0].hash, result[0].size, this.state.type, this.state.name, description).send({ from: this.state.account }).on('transactionHash', (hash) => {
         this.setState({
-         loading: false,
-         type: null,
-         name: null
-       })
-       window.location.reload()
-      }).on('error', (e) =>{
+          loading: false,
+          type: null,
+          name: null
+        })
+        window.location.reload()
+      }).on('error', (e) => {
         window.alert('Error')
-        this.setState({loading: false})
+        this.setState({ loading: false })
       })
     })
   }
@@ -136,23 +136,31 @@ class App extends Component {
     this.increaseUpvotes = this.increaseUpvotes.bind(this)
     this.decreaseUpvotes = this.decreaseUpvotes.bind(this)
   }
- increaseUpvotes(id){
-  console.log(id);
-  console.log(this.state.files);
+  increaseUpvotes(id) {
+    console.log("id: ", id);
+    // console.log(this.state.files);
 
 
-  // loop over the files and find the provided id.
-    let updatedList = this.state.files.map(file => 
-      {
-      if (file.fileId === this.state.files.length-id){
-        const val = file.upvotes++;
-        return {...file, upvotes : val}; //gets everything that was already in item, and updates "done"
+    // loop over the files and find the provided id.
+    let updatedList = this.state.files.map(file => {
+      // console.log("mapping");
+      // console.log("fileid: ", file.fileId);
+      // console.log("files.length: ", this.state.files.length);
+      // console.log("id: ", id);
+      // console.log(this.state.files.length - id);
+      if (file.fileId === id) {
+        console.log("inside if id: ", id);
+        const val = Number(file.upvotes) + 1;
+        console.log(typeof file.upvotes);
+        console.info('val:', val);
+        return { ...file, upvotes: val }; //gets everything that was already in item, and updates "done"
       }
       return file; // else return unmodified item 
     });
 
-    this.setState({files: updatedList}); // set state to new object with updated list
-    console.log(this.state.files);
+    console.log("updated list : ", updatedList);
+    this.setState({ files: updatedList }); // set state to new object with updated list
+    // console.log(this.state.files);
   }
   // updateItem(id, itemAttributes) {
   //   var index = this.state.files.findIndex(x=> x.fileId === id);
@@ -165,10 +173,10 @@ class App extends Component {
   //       ]
   //     });
   // }
-  
-  
-  decreaseUpvotes(id){
-    console.log(id);
+
+
+  decreaseUpvotes(id) {
+    // console.log(id);
     //this.updateItem(id, {upvotes: upvotes-1});
   }
 
@@ -176,15 +184,15 @@ class App extends Component {
     return (
       <div>
         <Navbar account={this.state.account} />
-        { this.state.loading
+        {this.state.loading
           ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
           : <Main
-              files={this.state.files}
-              increaseUpvotes={this.increaseUpvotes}
-              decreaseUpvotes={this.decreaseUpvotes}
-              captureFile={this.captureFile}
-              uploadFile={this.uploadFile}
-            />
+            files={this.state.files}
+            increaseUpvotes={this.increaseUpvotes}
+            decreaseUpvotes={this.decreaseUpvotes}
+            captureFile={this.captureFile}
+            uploadFile={this.uploadFile}
+          />
         }
       </div>
     );
