@@ -44,6 +44,7 @@ class Main extends Component {
                     <th scope="col" style={{ width: '90px'}}>date</th>
                     <th scope="col" style={{ width: '120px'}}>uploader/view</th>
                     <th scope="col" style={{ width: '120px'}}>hash/view/get</th>
+                    <th scope="col" style={{ width: '120px'}}>Upvotes</th>
                   </tr>
                 </thead>
                 { this.props.files.map((file, key) => {
@@ -71,6 +72,11 @@ class Main extends Component {
                             target="_blank">
                             {file.fileHash.substring(0,10)}...
                           </a>
+                        </td>
+                        <td>
+                          <button onClick={() => this.props.decreaseUpvotes(file.fileId)}>-</button>
+                          <span style={{ padding:"2px"}}>{file.upvotes}</span>
+                          <button onClick={() => this.props.increaseUpvotes(file.fileId)}>+</button>
                         </td>
                       </tr>
                     </thead>
