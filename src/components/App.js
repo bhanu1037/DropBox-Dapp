@@ -39,7 +39,7 @@ class App extends Component {
     //Load account
     const accounts = await web3.eth.getAccounts();
     //console.log(accounts);
-    this.setState({account : accounts[0]});
+    this.setState({account : accounts[0]}); 
 
     //Network ID
     const networkId = await web3.eth.net.getId()
@@ -50,6 +50,7 @@ class App extends Component {
       this.setState({ dstorage })
       // Get files amount
       const filesCount = await dstorage.methods.fileCount().call()
+    
       this.setState({ filesCount })
       // Load files&sort by the newest
       for (var i = filesCount; i >= 1; i--) {
@@ -64,6 +65,7 @@ class App extends Component {
     this.setState({loading: false});
 
   }
+
 
   // Get file from user
   captureFile = event => {
@@ -116,22 +118,61 @@ class App extends Component {
     })
   }
 
-  //Set states
-  constructor(props) {
-    super(props)
-    this.state = {
-      account: '',
-      dstorage: null,
-      files: [],
-      loading: false,
-      type: null,
-      name: null
-    }
+ increaseUpvotes(id){
 
-    //Bind functions
-    this.uploadFile = this.uploadFile.bind(this)
-    this.captureFile = this.captureFile.bind(this)
+  // loop over the files and find the provided id.
+    let updatedList = this.state.files.map(file => 
+      {
+        console.log(file.fileId);
+      if (file.fileId == id){
+        const val = Number(file.upvotes)+1;//<-------------------PROBLEM------------------------>
+        console.log("inside map   "+val);
+        return {...file,fileName : "bhanu", upvotes : val}; //gets everything that was already in item, and updates "done"
+      } 
+      return file; // else return unmodified item 
+    });
+
+    this.setState({files: updatedList}); // set state to new object with updated list
   }
+  
+  
+  decreaseUpvotes(id){
+    console.log(id);
+
+      // loop over the files and find the provided id.
+      let updatedList = this.state.files.map(file => 
+        {
+          console.log(file.fileId);
+        if (file.fileId == id){
+          const val = Number(file.upvotes)-1;//<-------------------PROBLEM------------------------>
+          console.log("inside map   "+val);
+          return {...file,fileName : "bhanu", upvotes : val}; //gets everything that was already in item, and updates "done"
+        } 
+        return file; // else return unmodified item 
+      });
+  
+      this.setState({files: updatedList}); // set state to new object with updated list
+
+  }
+
+    //Set states
+    constructor(props) {
+      super(props)
+      this.state = {
+        account: '',
+        dstorage: null,
+        files: [],
+        loading: false,
+        type: null,
+        name: null
+      }
+  
+      //Bind functions
+      this.uploadFile = this.uploadFile.bind(this)
+      this.captureFile = this.captureFile.bind(this)
+      this.increaseUpvotes = this.increaseUpvotes.bind(this)
+      this.decreaseUpvotes = this.decreaseUpvotes.bind(this)
+    }
 
   render() {
     return (
@@ -141,6 +182,8 @@ class App extends Component {
           ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
           : <Main
               files={this.state.files}
+              increaseUpvotes={this.increaseUpvotes}
+              decreaseUpvotes={this.decreaseUpvotes}
               captureFile={this.captureFile}
               uploadFile={this.uploadFile}
             />
