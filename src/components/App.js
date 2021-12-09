@@ -120,38 +120,58 @@ class App extends Component {
 
  increaseUpvotes(id){
 
-  // loop over the files and find the provided id.
-    let updatedList = this.state.files.map(file => 
-      {
-        console.log(file.fileId);
-      if (file.fileId == id){
-        const val = Number(file.upvotes)+1;//<-------------------PROBLEM------------------------>
-        console.log("inside map   "+val);
-        return {...file,fileName : "bhanu", upvotes : val}; //gets everything that was already in item, and updates "done"
-      } 
-      return file; // else return unmodified item 
-    });
+  this.setState({ loading: true })
 
-    this.setState({files: updatedList}); // set state to new object with updated list
+  this.state.dstorage.methods.fileUpvoted(id).send({ from: this.state.account }).on('transactionHash', (hash) => {
+    console.log(hash);
+    this.setState({
+     loading: false
+   })
+   // loop over the files and find the provided id.
+   let updatedList = this.state.files.map(file => 
+    {
+      console.log(file.fileId);
+    if (file.fileId == id){
+      const val = Number(file.upvotes)+1;//<-------------------PROBLEM------------------------>
+      console.log("inside map   "+val);
+      return {...file,fileName : "bhanu", upvotes : val}; //gets everything that was already in item, and updates "done"
+    } 
+    return file; // else return unmodified item 
+  });
+  this.setState({files: updatedList}); // set state to new object with updated list
+   //window.location.reload()
+  }).on('error', (e) =>{
+    window.alert('Error')
+    this.setState({loading: false})
+  })
   }
   
   
   decreaseUpvotes(id){
-    console.log(id);
+    this.setState({ loading: true })
 
-      // loop over the files and find the provided id.
-      let updatedList = this.state.files.map(file => 
-        {
-          console.log(file.fileId);
-        if (file.fileId == id){
-          const val = Number(file.upvotes)-1;//<-------------------PROBLEM------------------------>
-          console.log("inside map   "+val);
-          return {...file,fileName : "bhanu", upvotes : val}; //gets everything that was already in item, and updates "done"
-        } 
-        return file; // else return unmodified item 
-      });
-  
-      this.setState({files: updatedList}); // set state to new object with updated list
+  this.state.dstorage.methods.fileUpvoted(id).send({ from: this.state.account }).on('transactionHash', (hash) => {
+    console.log(hash);
+    this.setState({
+     loading: false
+   })
+   // loop over the files and find the provided id.
+   let updatedList = this.state.files.map(file => 
+    {
+      console.log(file.fileId);
+    if (file.fileId == id){
+      const val = Number(file.upvotes)-1;//<-------------------PROBLEM------------------------>
+      console.log("inside map   "+val);
+      return {...file,fileName : "bhanu", upvotes : val}; //gets everything that was already in item, and updates "done"
+    } 
+    return file; // else return unmodified item 
+  });
+  this.setState({files: updatedList}); // set state to new object with updated list
+   //window.location.reload()
+  }).on('error', (e) =>{
+    window.alert('Error')
+    this.setState({loading: false})
+  })
 
   }
 
