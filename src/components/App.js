@@ -39,7 +39,7 @@ class App extends Component {
     //Load account
     const accounts = await web3.eth.getAccounts();
     //console.log(accounts);
-    this.setState({account : accounts[0]});
+    this.setState({account : accounts[0]}); 
 
     //Network ID
     const networkId = await web3.eth.net.getId()
@@ -50,6 +50,7 @@ class App extends Component {
       this.setState({ dstorage })
       // Get files amount
       const filesCount = await dstorage.methods.fileCount().call()
+    
       this.setState({ filesCount })
       // Load files&sort by the newest
       for (var i = filesCount; i >= 1; i--) {
@@ -64,6 +65,7 @@ class App extends Component {
     this.setState({loading: false});
 
   }
+
 
   // Get file from user
   captureFile = event => {
@@ -131,6 +133,43 @@ class App extends Component {
     //Bind functions
     this.uploadFile = this.uploadFile.bind(this)
     this.captureFile = this.captureFile.bind(this)
+    this.increaseUpvotes = this.increaseUpvotes.bind(this)
+    this.decreaseUpvotes = this.decreaseUpvotes.bind(this)
+  }
+ increaseUpvotes(id){
+  console.log(id);
+  console.log(this.state.files);
+
+
+  // loop over the files and find the provided id.
+    let updatedList = this.state.files.map(file => 
+      {
+      if (file.fileId === this.state.files.length-id){
+        const val = file.upvotes++;
+        return {...file, upvotes : val}; //gets everything that was already in item, and updates "done"
+      }
+      return file; // else return unmodified item 
+    });
+
+    this.setState({files: updatedList}); // set state to new object with updated list
+    console.log(this.state.files);
+  }
+  // updateItem(id, itemAttributes) {
+  //   var index = this.state.files.findIndex(x=> x.fileId === id);
+
+  //     this.setState({
+  //       files: [
+  //          ...this.state.files.slice(0,index),
+  //          Object.assign({}, this.state.files[index], itemAttributes),
+  //          ...this.state.files.slice(index+1)
+  //       ]
+  //     });
+  // }
+  
+  
+  decreaseUpvotes(id){
+    console.log(id);
+    //this.updateItem(id, {upvotes: upvotes-1});
   }
 
   render() {
@@ -141,6 +180,8 @@ class App extends Component {
           ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
           : <Main
               files={this.state.files}
+              increaseUpvotes={this.increaseUpvotes}
+              decreaseUpvotes={this.decreaseUpvotes}
               captureFile={this.captureFile}
               uploadFile={this.uploadFile}
             />

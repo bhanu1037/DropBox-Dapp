@@ -42,7 +42,7 @@ contract DStorage {
   function fileUpvoted(uint _fileId) public {
     files[_fileId].upvotes++;
   }
-  function downUpvoted(uint _fileId) public {
+  function fileDownvoted(uint _fileId) public {
     files[_fileId].upvotes--;
   }
 
